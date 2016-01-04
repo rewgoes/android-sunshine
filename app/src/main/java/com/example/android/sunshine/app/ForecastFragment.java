@@ -236,6 +236,7 @@ public class ForecastFragment extends Fragment {
 
             String format = "json";
             String units = "metric";
+            String appId = "e19b235706c90426aab002aa8c134ab7";
             int numDays = 7;
 
             try {
@@ -248,12 +249,14 @@ public class ForecastFragment extends Fragment {
                 final String FORMAT_PARAM = "mode";
                 final String UNITS_PARAM = "units";
                 final String DAYS_PARAM = "cnt";
+                final String APPID = "APPID";
 
                 Uri builtUri = Uri.parse(FORECAST_BASE_URL).buildUpon()
                         .appendQueryParameter(QUERY_PARAM, params[0])
                         .appendQueryParameter(FORMAT_PARAM, format)
                         .appendQueryParameter(UNITS_PARAM, units)
                         .appendQueryParameter(DAYS_PARAM, Integer.toString(numDays))
+                        .appendQueryParameter(APPID, appId)
                         .build();
 
                 URL url = new URL(builtUri.toString());
@@ -266,29 +269,44 @@ public class ForecastFragment extends Fragment {
                 urlConnection.connect();
 
                 // Read the input stream into a String
-                InputStream inputStream = urlConnection.getInputStream();
-                StringBuffer buffer = new StringBuffer();
-                if (inputStream == null) {
-                    // Nothing to do.
+                int status = urlConnection.getResponseCode();
+
+                InputStream inputStream;
+                StringBuffer buffer;
+
+                if (status >= 400) {
+                    inputStream = urlConnection.getErrorStream();
+
+                    if (inputStream == null)
+                        return null;
+
+                    reader = new BufferedReader(new InputStreamReader(inputStream));
+                    Log.e(LOG_TAG, "HTTP Error: " + reader.readLine());
                     return null;
                 }
-                reader = new BufferedReader(new InputStreamReader(inputStream));
+                else {
+                    inputStream = urlConnection.getInputStream();
+                    buffer = new StringBuffer();
+                    if (inputStream == null) {
+                        // Nothing to do.
+                        return null;
+                    }
+                    reader = new BufferedReader(new InputStreamReader(inputStream));
 
-                String line;
-                while ((line = reader.readLine()) != null) {
-                    // Since it's JSON, adding a newline isn't necessary (it won't affect parsing)
-                    // But it does make debugging a *lot* easier if you print out the completed
-                    // buffer for debugging.
-                    buffer.append(line + "\n");
+                    String line;
+                    while ((line = reader.readLine()) != null) {
+                        // Since it's JSON, adding a newline isn't necessary (it won't affect parsing)
+                        // But it does make debugging a *lot* easier if you print out the completed
+                        // buffer for debugging.
+                        buffer.append(line + "\n");
+                    }
+
+                    if (buffer.length() == 0) {
+                        // Stream was empty.  No point in parsing.
+                        return null;
+                    }
+                    forecastJsonStr = buffer.toString();
                 }
-
-                if (buffer.length() == 0) {
-                    // Stream was empty.  No point in parsing.
-                    return null;
-                }
-                forecastJsonStr = buffer.toString();
-
-                //Log.v(LOG_TAG, "Forecast JSON String: " + forecastJsonStr);
 
             } catch (IOException e) {
                 Log.e(LOG_TAG, "Error ", e);
