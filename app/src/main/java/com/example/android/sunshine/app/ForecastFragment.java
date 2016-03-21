@@ -60,15 +60,17 @@ public class ForecastFragment extends Fragment {
         int id = item.getItemId();
 
         if (id == R.id.action_refresh) {
-            SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getContext());
-            String location = preferences.getString(getString(R.string.pref_location_key), getString(R.string.pref_location_default));
-
-            new FeatchWeatherTask().execute(location);
-
+            updateWeather();
             return true;
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onStart() {
+        updateWeather();
+        super.onStart();
     }
 
     @Override
@@ -77,23 +79,10 @@ public class ForecastFragment extends Fragment {
 
         View rootView = inflater.inflate(R.layout.fragment_main, container, false);
 
-        // Create some dummy data for the ListView.  Here's a sample weekly forecast
-        String[] listForecast = {
-                "Mon 6/23 - Sunny - 31/17",
-                "Tue 6/24 - Foggy - 21/8",
-                "Wed 6/25 - Cloudy - 22/17",
-                "Thurs 6/26 - Rainy - 18/11",
-                "Fri 6/27 - Foggy - 21/10",
-                "Sat 6/28 - TRAPPED IN WEATHERSTATION - 23/18",
-                "Sun 6/29 - Sunny - 20/7"
-        };
-
-        List<String> weekForecast = new ArrayList<>(Arrays.asList(listForecast));
-
         mForecastAdapter = new ArrayAdapter<>(getActivity(),
                 R.layout.list_item_forecast,
                 R.id.list_item_forecast_textview,
-                weekForecast);
+                new ArrayList<String>());
         mForecastAdapter.setNotifyOnChange(false);
 
         ListView listView = (ListView) rootView.findViewById(R.id.list_view_forecast);
@@ -114,6 +103,13 @@ public class ForecastFragment extends Fragment {
         });
 
         return rootView;
+    }
+
+    private void updateWeather(){
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getContext());
+        String location = preferences.getString(getString(R.string.pref_location_key), getString(R.string.pref_location_default));
+
+        new FeatchWeatherTask().execute(location);
     }
 
     public class FeatchWeatherTask extends AsyncTask<String, Void, String[]> {
