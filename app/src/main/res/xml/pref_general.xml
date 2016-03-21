@@ -3,7 +3,18 @@
 
     <EditTextPreference
         android:key="@string/pref_location_key"
-        android:title="@string/pref_location_title"
+        android:title="@string/pref_location_label"
         android:defaultValue="@string/pref_location_default" />
+
+    <!--
+        android:entries -> The human-readable array to present as a list. Each entry must have a corresponding index in entryValues
+        android:entryValues -> The array to find the value to save for a preference when an entry from entries is selected. If a user clicks on the second item in entries, the second item in this array will be saved to the preference
+    -->
+    <ListPreference
+        android:title="@string/pref_units_label"
+        android:key="@string/pref_units_key"
+        android:defaultValue="@string/pref_units_metric"
+        android:entryValues="@array/pref_units_values"
+        android:entries="@array/pref_units_label_values" />
 
 </PreferenceScreen>
