@@ -306,6 +306,11 @@ public class ForecastFragment extends Fragment {
             // we start storing the values in a database.
             SharedPreferences sharedPrefs =
                     PreferenceManager.getDefaultSharedPreferences(getActivity());
+
+            /**
+             * TODO : java.lang.NullPointerException: Attempt to invoke virtual method 'java.lang.String android.content.Context.getPackageName()' on a null object reference
+             * Error occurred after closing the app
+             */
             String unitType = sharedPrefs.getString(
                     getString(R.string.pref_units_key),
                     getString(R.string.pref_units_metric));

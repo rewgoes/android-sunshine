@@ -17,7 +17,11 @@
         <!-- Menu label to fetch updated weather info from the server -->
         <string name="action_refresh" translatable="false">Refresh</string>
 
+        <!-- Menu label to show location from shared preference -->
         <string name="action_map">Map location</string>
+
+        <!-- Menu label to share weather detail -->
+        <string name="action_share">Share</string>
     <!-- ##### END MENU BLOCK ##### -->
 
     <string name="title_activity_detail">Details</string>
