@@ -17,8 +17,6 @@ import android.widget.TextView;
 
 public class DetailActivity extends AppCompatActivity {
 
-    private static Intent mShareIntent;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
