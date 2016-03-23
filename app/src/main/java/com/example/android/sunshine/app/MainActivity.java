@@ -3,9 +3,9 @@ package com.example.android.sunshine.app;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
+import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -13,10 +13,14 @@ import android.view.MenuItem;
 public class MainActivity extends AppCompatActivity {
 
     private String LOG_TAG = getClass().getSimpleName();
+    private boolean debugLifecycle = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        if (debugLifecycle) Log.d(LOG_TAG, "onCreate()");
+
         setContentView(R.layout.activity_main);
 
         if (savedInstanceState == null) {
@@ -76,5 +80,36 @@ public class MainActivity extends AppCompatActivity {
         else
             Log.d(LOG_TAG, "Couldn't call " + location);
     }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        if (debugLifecycle) Log.d(LOG_TAG, "onStop()");
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (debugLifecycle) Log.d(LOG_TAG, "onDestroy()");
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        if (debugLifecycle) Log.d(LOG_TAG, "onPause()");
+    }
+    @Override
+    protected void onStart() {
+        super.onStart();
+        if (debugLifecycle) Log.d(LOG_TAG, "onStart()");
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (debugLifecycle) Log.d(LOG_TAG, "onResume()");
+    }
+
+
 
 }
