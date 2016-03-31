@@ -65,7 +65,6 @@ public class ForecastFragment extends Fragment {
                 R.layout.list_item_forecast,
                 R.id.list_item_forecast_textview,
                 new ArrayList<String>());
-        mForecastAdapter.setNotifyOnChange(false);
 
         ListView listView = (ListView) rootView.findViewById(R.id.list_view_forecast);
         listView.setAdapter(mForecastAdapter);
