@@ -1,12 +1,12 @@
 package com.example.android.sunshine.app;
 
-import android.content.Intent;
-import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.Loader;
+import android.support.v4.content.CursorLoader;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -17,9 +17,12 @@ import android.widget.ListView;
 
 import com.example.android.sunshine.app.data.WeatherContract;
 
-public class ForecastFragment extends Fragment {
+public class ForecastFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
 
-    private final static String TAG = ForecastFragment.class.getSimpleName();
+    private final static boolean DEBUG = true;
+    private final static String LOT_TAG = ForecastFragment.class.getSimpleName();
+    private final static int FORECAST_LOADER = 0;
+    private static View rootView;
 
     private ForecastAdapter mForecastAdapter;
 
@@ -58,6 +61,25 @@ public class ForecastFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        // The CursorAdapter will take data from our cursor and populate the ListView.
+        mForecastAdapter = new ForecastAdapter(getActivity(), null, 0);
+
+        rootView = inflater.inflate(R.layout.fragment_main, container, false);
+
+        // Get a reference to the ListView, and attach this adapter to it.
+        ListView listView = (ListView) rootView.findViewById(R.id.list_view_forecast);
+        listView.setAdapter(mForecastAdapter);
+
+        return rootView;
+    }
+
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        getLoaderManager().initLoader(FORECAST_LOADER, null, this);
+        super.onActivityCreated(savedInstanceState);
+    }
+
+    public Loader<Cursor> onCreateLoader(int id, Bundle args) {
         String locationSetting = Utility.getPreferredLocation(getActivity());
 
         // Sort order:  Ascending, by date.
@@ -65,29 +87,27 @@ public class ForecastFragment extends Fragment {
         Uri weatherForLocationUri = WeatherContract.WeatherEntry.buildWeatherLocationWithStartDate(
                 locationSetting, System.currentTimeMillis());
 
-        Cursor cur = getContext().getContentResolver().query(weatherForLocationUri,
-                null, null, null, sortOrder);
+        CursorLoader cur = new CursorLoader(getContext(),
+                weatherForLocationUri,
+                null,
+                null,
+                null,
+                sortOrder);
 
-        mForecastAdapter = new ForecastAdapter(getActivity(), cur, 0);
+        return cur;
+    }
 
-        View rootView = inflater.inflate(R.layout.fragment_main, container, false);
+    public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+        // Swap the new cursor in.  (The framework will take care of closing the
+        // old cursor once we return.).
+        mForecastAdapter.swapCursor(data);
+    }
 
-        ListView listView = (ListView) rootView.findViewById(R.id.list_view_forecast);
-        listView.setAdapter(mForecastAdapter);
-
-//        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-//            @Override
-//            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-//                String item = mForecastAdapter.getItem(position);
-//
-//                Intent detailIntent = new Intent(getActivity(), DetailActivity.class)
-//                        .putExtra(Intent.EXTRA_TEXT, item);
-//
-//                startActivity(detailIntent);
-//            }
-//        });
-
-        return rootView;
+    public void onLoaderReset(Loader<Cursor> loader) {
+        // This is called when the last Cursor provided to onLoadFinished()
+        // above is about to be closed.  We need to make sure we are no
+        // longer using it.
+        mForecastAdapter.swapCursor(null);
     }
 
     private void updateWeather(){
