@@ -14,6 +14,8 @@ public class MainActivity extends AppCompatActivity {
 
     private String LOG_TAG = getClass().getSimpleName();
     private boolean debugLifecycle = false;
+    private static String mLocation;
+    private static final String FORECASTFRAGMENT_TAG = "FFTAG";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -21,11 +23,17 @@ public class MainActivity extends AppCompatActivity {
 
         if (debugLifecycle) Log.d(LOG_TAG, "onCreate()");
 
+        SharedPreferences sharedPreferences =
+                PreferenceManager.getDefaultSharedPreferences(this);
+        mLocation = sharedPreferences.getString(
+                getString(R.string.pref_location_key),
+                getString(R.string.pref_location_default));
+
         setContentView(R.layout.activity_main);
 
         if (savedInstanceState == null) {
             getSupportFragmentManager().beginTransaction()
-                    .add(R.id.container, new ForecastFragment())
+                    .add(R.id.container, new ForecastFragment(), FORECASTFRAGMENT_TAG)
                     .commit();
         }
     }
@@ -59,17 +67,11 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void openPreferredLocationInMap() {
-        SharedPreferences sharedPreferences =
-                PreferenceManager.getDefaultSharedPreferences(this);
-        String location = sharedPreferences.getString(
-                getString(R.string.pref_location_key),
-                getString(R.string.pref_location_default));
-
         // Using the URI scheme for showing a location found on a map.  This super-handy
         // intent can is detailed in the "Common Intents" page of Android's developer site:
         // http://developer.android.com/guide/components/intents-common.html#Maps
         Uri geoLocation = Uri.parse("geo:0,0?").buildUpon()
-                .appendQueryParameter("q", location)
+                .appendQueryParameter("q", mLocation)
                 .build();
 
         Intent intent = new Intent(Intent.ACTION_VIEW);
@@ -78,7 +80,7 @@ public class MainActivity extends AppCompatActivity {
         if (intent.resolveActivity(getPackageManager()) != null)
             startActivity(intent);
         else
-            Log.d(LOG_TAG, "Couldn't call " + location);
+            Log.d(LOG_TAG, "Couldn't call " + mLocation);
     }
 
     @Override
@@ -108,6 +110,16 @@ public class MainActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         if (debugLifecycle) Log.d(LOG_TAG, "onResume()");
+
+        String location = Utility.getPreferredLocation(this);
+
+        // update the location in our second pane using the fragment manager
+        if (location != null && !location.equals(mLocation)) {
+            ForecastFragment ff = (ForecastFragment) getSupportFragmentManager().findFragmentByTag(FORECASTFRAGMENT_TAG);
+            if (ff != null)
+                ff.onLocationChanged();
+            mLocation = location;
+        }
     }
 
 

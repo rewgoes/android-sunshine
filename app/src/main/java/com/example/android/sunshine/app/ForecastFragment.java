@@ -85,12 +85,6 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
     }
 
     @Override
-    public void onStart() {
-        super.onStart();
-        updateWeather();
-    }
-
-    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // The CursorAdapter will take data from our cursor and populate the ListView.
@@ -164,6 +158,11 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
         FetchWeatherTask weatherTask = new FetchWeatherTask(getActivity());
         String location = Utility.getPreferredLocation(getActivity());
         weatherTask.execute(location);
+    }
+
+    public void onLocationChanged(){
+        updateWeather();
+        getLoaderManager().restartLoader(FORECAST_LOADER, null, this);
     }
 
 }
