@@ -32,6 +32,7 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
     private final static String LOT_TAG = ForecastFragment.class.getSimpleName();
     private final static int FORECAST_LOADER = 0;
     private static View rootView;
+    private boolean mUseTodayLayout;
 
     /**
      * A callback interface that all activities containing this fragment must
@@ -140,6 +141,8 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
         if (savedInstanceState != null && savedInstanceState.containsKey(SELECTED_KEY))
             mPosition = savedInstanceState.getInt(SELECTED_KEY);
 
+        mForecastAdapter.setUseTodayLayout(mUseTodayLayout);
+
         return rootView;
     }
 
@@ -205,6 +208,13 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
     public void onLocationChanged(){
         updateWeather();
         getLoaderManager().restartLoader(FORECAST_LOADER, null, this);
+    }
+
+    public void setUseTodayLayout(boolean useTodayLayout) {
+        mUseTodayLayout = useTodayLayout;
+        if (mForecastAdapter != null) {
+            mForecastAdapter.setUseTodayLayout(mUseTodayLayout);
+        }
     }
 
 }
