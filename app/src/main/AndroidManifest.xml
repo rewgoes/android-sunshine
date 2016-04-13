@@ -17,7 +17,9 @@
             android:name=".data.WeatherProvider"
             />
 
-        <activity android:name=".MainActivity">
+        <activity android:name=".MainActivity"
+            android:theme="@style/ForecastTheme"
+            android:label="@string/app_name" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -40,7 +42,8 @@
         </activity>
 
         <activity android:name=".DetailActivity"
-            android:label="@string/title_activity_detail">
+            android:label="@string/title_activity_detail"
+            android:parentActivityName="com.example.android.sunshine.app.MainActivity" >
 
             <!-- android:parentActivityName=".MainActivity"  used only in API level 16, current is 10, use below meta-data -->
             <meta-data
@@ -50,10 +53,12 @@
 
         <activity
             android:name=".SettingsActivity"
-            android:label="@string/action_settings">
+            android:theme="@style/SettingsTheme"
+            android:label="@string/action_settings"
+            android:parentActivityName="com.example.android.sunshine.app.MainActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".MainActivity" />
+                android:value="com.example.android.sunshine.app.MainActivity" />
         </activity>
     </application>
 
