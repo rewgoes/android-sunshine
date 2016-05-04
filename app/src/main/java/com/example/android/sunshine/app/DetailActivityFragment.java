@@ -47,8 +47,8 @@ public class DetailActivityFragment extends Fragment implements LoaderManager.Lo
             WeatherContract.WeatherEntry.COLUMN_MIN_TEMP,
             WeatherContract.WeatherEntry.COLUMN_HUMIDITY,
             WeatherContract.WeatherEntry.COLUMN_WIND_SPEED,
-            WeatherContract.WeatherEntry.COLUMN_PRESSURE,
             WeatherContract.WeatherEntry.COLUMN_DEGREES,
+            WeatherContract.WeatherEntry.COLUMN_PRESSURE,
             WeatherContract.WeatherEntry.COLUMN_WEATHER_ID
     };
 
@@ -76,6 +76,7 @@ public class DetailActivityFragment extends Fragment implements LoaderManager.Lo
         public final TextView highTempView;
         public final TextView lowTempView;
         public final TextView windView;
+        public final Compass compassView;
         public final TextView pressureView;
         public final TextView humidityView;
 
@@ -87,6 +88,7 @@ public class DetailActivityFragment extends Fragment implements LoaderManager.Lo
             highTempView = (TextView) view.findViewById(R.id.detail_high_textview);
             lowTempView = (TextView) view.findViewById(R.id.detail_low_textview);
             windView = (TextView) view.findViewById(R.id.detail_wind_textview);
+            compassView = (Compass) view.findViewById(R.id.detail_wind_compass);
             pressureView = (TextView) view.findViewById(R.id.detail_pressure_textview);
             humidityView = (TextView) view.findViewById(R.id.detail_humidity_textview);
         }
@@ -159,9 +161,11 @@ public class DetailActivityFragment extends Fragment implements LoaderManager.Lo
         );
         viewHolder.humidityView.setText(humidity);
 
+        float windDirStr = data.getFloat(COL_WEATHER_WIND_DEGREE);
         String wind = Utility.getFormattedWind(
-                getContext(), data.getFloat(COL_WEATHER_WIND_SPEED), data.getFloat(COL_WEATHER_WIND_DEGREE));
+                getContext(), data.getFloat(COL_WEATHER_WIND_SPEED), windDirStr);
         viewHolder.windView.setText(wind);
+        viewHolder.compassView.update(windDirStr);
 
         String pressure = String.format(
                 getContext().getString(R.string.format_pressure),

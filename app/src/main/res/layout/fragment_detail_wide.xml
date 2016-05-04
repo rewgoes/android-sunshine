@@ -23,7 +23,6 @@
                 android:layout_height="wrap_content"
                 android:minWidth="120dp"
                 android:textSize="24sp"
-                android:text="Wednesday"
                 android:fontFamily="sans-serif-condensed"
                 android:textColor="@color/black" />
 
