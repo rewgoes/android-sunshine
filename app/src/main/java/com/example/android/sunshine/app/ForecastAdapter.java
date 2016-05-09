@@ -59,7 +59,7 @@ public class ForecastAdapter extends CursorAdapter {
     }
 
     /*
-        This is ported from FetchWeatherTask --- but now we go straight from the cursor to the
+        This is ported from SunshineService --- but now we go straight from the cursor to the
         string.
      */
     private String convertCursorRowToUXFormat(Cursor cursor) {
