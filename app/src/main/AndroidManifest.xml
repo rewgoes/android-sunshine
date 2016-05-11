@@ -2,8 +2,10 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.android.sunshine.app">
 
+    <!-- This permission is necessary in order for Sunshine to perform network access. -->
     <uses-permission
         android:name="android.permission.INTERNET" />
+
     <!-- Permissions required by the sync adapter -->
     <uses-permission
         android:name="android.permission.READ_SYNC_SETTINGS"/>
@@ -71,9 +73,7 @@
         </activity>
 
         <!-- SyncAdapter's dummy authentication service -->
-        <service
-            android:name=".sync.SunshineAuthenticatorService"
-            >
+        <service android:name=".sync.SunshineAuthenticatorService">
             <intent-filter>
                 <action android:name="android.accounts.AccountAuthenticator" />
             </intent-filter>
