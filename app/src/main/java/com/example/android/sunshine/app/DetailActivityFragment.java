@@ -147,12 +147,12 @@ public class DetailActivityFragment extends Fragment implements LoaderManager.Lo
 
         // Read high temperature from cursor
         String high = Utility.formatTemperature(
-                getContext(), data.getDouble(COL_WEATHER_MAX_TEMP), isMetric);
+                getContext(), data.getDouble(COL_WEATHER_MAX_TEMP));
         viewHolder.highTempView.setText(high);
 
         // Read low temperature from cursor
         String low = Utility.formatTemperature(
-                getContext(), data.getDouble(COL_WEATHER_MIN_TEMP), isMetric);
+                getContext(), data.getDouble(COL_WEATHER_MIN_TEMP));
         viewHolder.lowTempView.setText(low);
 
         String humidity = String.format(
