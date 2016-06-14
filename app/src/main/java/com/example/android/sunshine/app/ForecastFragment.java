@@ -1,7 +1,10 @@
 package com.example.android.sunshine.app;
 
+import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -17,9 +20,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import com.example.android.sunshine.app.data.WeatherContract;
 import com.example.android.sunshine.app.sync.SunshineSyncAdapter;
+
+import org.w3c.dom.Text;
 
 public class ForecastFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
 
@@ -187,6 +193,7 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
     }
 
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+
         // Swap the new cursor in.  (The framework will take care of closing the
         // old cursor once we return.).
         mForecastAdapter.swapCursor(data);
@@ -195,6 +202,7 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
             // to, do so now.
             mListView.smoothScrollToPosition(mPosition);
         }
+        updateEmptyView();
     }
 
     public void onLoaderReset(Loader<Cursor> loader) {
@@ -222,8 +230,6 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
         }
     }
 
-
-
     private void openPreferredLocationInMap() {
         // Using the URI scheme for showing a location found on a map.  This super-handy
         // intent can is detailed in the "Common Intents" page of Android's developer site:
@@ -246,6 +252,20 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
                 }
             }
 
+        }
+    }
+
+    /* Update empty list view message */
+    private void updateEmptyView() {
+        if ( mForecastAdapter.getCount() == 0 ) {
+            TextView tv = (TextView) getView().findViewById(R.id.empty);
+            if (null != tv) {
+                int message = R.string.no_weather_information;
+                if (!Utility.isNetworkAvailable(getActivity())) {
+                    message = R.string.no_network;
+                }
+                tv.setText(message);
+            }
         }
     }
 
