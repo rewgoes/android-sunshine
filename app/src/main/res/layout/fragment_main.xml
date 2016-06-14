@@ -12,4 +12,12 @@
         android:layout_height="match_parent"
         android:divider="@null"
         android:overScrollHeader="@color/sunshine_blue" />
+
+    <TextView
+        android:id="@+id/empty"
+        android:padding="16dp"
+        android:gravity="center_horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:text="@string/no_weather_information"/>
 </FrameLayout>
